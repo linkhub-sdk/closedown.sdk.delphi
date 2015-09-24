@@ -114,7 +114,7 @@ begin
         if FToken = nil then noneOrExpired := true
         else begin
                 Expiration := UTCToDate(FToken.expiration);
-                noneOrExpired := expiration < now;
+                noneOrExpired := expiration < UTCToDate(FAuth.getTime());
         end;
 
         if noneOrExpired then
@@ -136,16 +136,16 @@ var
 begin
         url := ServiceURL + url;
 
-        http:=createoleobject('WinHttp.WinHttpRequest.5.1');
+        http:=createoleobject('MSXML2.XMLHTTP.6.0');
         http.open('GET',url);
 
         sessiontoken := getSession_Token();
 
         http.setRequestHeader('Authorization', 'Bearer ' + sessiontoken);
         http.setRequestHeader('x-api-version', APIVersion);
+        http.setRequestHeader('Accept-Encoding','gzip,deflate');
 
         http.send;
-        http.WaitForResponse;
 
         response := http.responsetext;
         if http.Status <> 200 then
