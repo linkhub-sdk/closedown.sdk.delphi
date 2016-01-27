@@ -82,6 +82,7 @@ type
                 function GetUnitCost() : Single;
                 function checkCorpNum(CorpNum : String) : TCorpState;
                 function checkCorpNums(CorpNumList : Array Of String) : TCorpStateList;
+                destructor Destroy; override;
         end;
 
         EClosedownException = class(Exception)
@@ -97,6 +98,16 @@ type
 
 implementation
 
+destructor TClosedownChecker.Destroy;
+var
+  I: Integer;
+begin
+  if Assigned(FToken) then
+    FToken.Free;
+  if Assigned(FAuth) then
+    FAuth.Free;
+  inherited Destroy;
+end;
 
 constructor EClosedownException.Create(code : LongInt; Message : String);
 begin
